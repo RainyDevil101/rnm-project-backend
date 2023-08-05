@@ -1,8 +1,16 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
+import cors from '@fastify/cors';
 import 'dotenv/config';
+
+import getRoutes from '../routes/user.routes.js';
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const publicFolderPath = path.join(__dirname, '..', '..', 'public');
 
 class Server {
 
@@ -11,6 +19,7 @@ class Server {
       logger: true,
     });
     this.port = process.env.PORT;
+    this.usersPath = '/api/users';
 
     // Middlewares
     this.middlewares();
@@ -22,10 +31,10 @@ class Server {
 
   middlewares() {
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
+    // CORS
+    this.app.register(cors, {});
 
-    const publicFolderPath = path.join(__dirname, '..', '..', 'public');
+    // Public Directory
 
     this.app.register(fastifyStatic, {
       root: publicFolderPath,
@@ -41,9 +50,15 @@ class Server {
   };
 
   routes() {
-    this.app.get('/api', (req, res) => {
-      res.send({ hello: 'world' });
-    });
+
+    const { routes } = getRoutes();
+
+    this.app.register((app, _, done) => {
+      routes.map((route) => {
+        app.route(route);
+      });
+      done();
+    }, { prefix: this.usersPath });
   };
 
   listen() {
@@ -57,6 +72,4 @@ class Server {
   };
 };
 
-
 export default Server;
-
