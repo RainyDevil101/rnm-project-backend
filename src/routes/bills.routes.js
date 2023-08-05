@@ -1,6 +1,6 @@
 import { getBill, createBill, getBills, deleteBill, updateBill } from '../controllers/bills.controllers.js';
 
-const billsRoutes = () => [
+export const billsRoutes = () => [
   {
     url: '/:id',
     method: 'GET',
@@ -28,5 +28,3 @@ const billsRoutes = () => [
   },
 
 ];
-
-export { billsRoutes };

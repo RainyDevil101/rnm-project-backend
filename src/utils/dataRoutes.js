@@ -1,14 +1,16 @@
+import { billsRoutes, categoriesRoutes, usersRoutes } from '../routes/index.js';
+
 export const routesData = [
   {
-    prefix: this.usersPath,
+    prefix: '/api/users',
     routes: usersRoutes(),
   },
   {
-    prefix: this.categoriesPath,
+    prefix: '/api/categories',
     routes: categoriesRoutes(),
   },
   {
-    prefix: this.billsPath,
+    prefix: '/api/bills',
     routes: billsRoutes(),
   },
 ];

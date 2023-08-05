@@ -1,6 +1,6 @@
 import { getUser, createUser, getUsers, deleteUser, updateUser } from '../controllers/users.controllers.js';
 
-const usersRoutes = () => [
+export const usersRoutes = () => [
   {
     url: '/:id',
     method: 'GET',
@@ -28,5 +28,3 @@ const usersRoutes = () => [
   },
 
 ];
-
-export { usersRoutes };

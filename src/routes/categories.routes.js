@@ -1,6 +1,6 @@
 import { getCategory, createCategory, getCategories, deleteCategory, updateCategory } from '../controllers/categories.controllers.js';
 
-const categoriesRoutes = () => [
+export const categoriesRoutes = () => [
   {
     url: '/:id',
     method: 'GET',
@@ -28,5 +28,3 @@ const categoriesRoutes = () => [
   },
 
 ];
-
-export { categoriesRoutes };

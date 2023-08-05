@@ -6,7 +6,7 @@ import fastifyStatic from '@fastify/static';
 import cors from '@fastify/cors';
 import 'dotenv/config';
 
-import { billsRoutes, categoriesRoutes, usersRoutes } from '../routes/index.js';
+import { routesData, registerRoutes } from '../utils/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicFolderPath = path.join(__dirname, '..', '..', 'public');
@@ -18,10 +18,6 @@ class Server {
       logger: true,
     });
     this.port = process.env.PORT;
-
-    this.usersPath = '/api/users';
-    this.categoriesPath = '/api/categories';
-    this.billsPath = '/api/bills';
 
     // Middlewares
     this.middlewares();
@@ -53,26 +49,9 @@ class Server {
 
   routes() {
 
-    this.app.register((app, _, done) => {
-      usersRoutes().map((route) => {
-        app.route(route);
-      });
-      done();
-    }, { prefix: this.usersPath });
-
-    this.app.register((app, _, done) => {
-      categoriesRoutes().map((route) => {
-        app.route(route);
-      });
-      done();
-    }, { prefix: this.categoriesPath });
-
-    this.app.register((app, _, done) => {
-      billsRoutes().map((route) => {
-        app.route(route);
-      });
-      done();
-    }, { prefix: this.billsPath });
+    routesData.forEach((routeData) => {
+      registerRoutes(this.app, routeData);
+    });
 
   };
 
