@@ -23,7 +23,7 @@ export const billsRoutes = () => [
   },
   {
     url: '/:id',
-    method: 'PUT',
+    method: 'PATCH',
     handler: updateBill
   },
 

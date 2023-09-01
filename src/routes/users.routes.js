@@ -1,5 +1,10 @@
 import { getUser, createUser, getUsers, deleteUser, updateUser } from '../controllers/users.controllers.js';
 
+const middleware = (req, reply, next) => {
+  console.log('Middleware asdasd');
+  next();
+};
+
 export const usersRoutes = () => [
   {
     url: '/:id',
@@ -9,12 +14,13 @@ export const usersRoutes = () => [
   {
     url: '/',
     method: 'GET',
-    handler: getUsers
+    handler: getUsers,
+    preHandler: [middleware]
   },
   {
     url: '/',
     method: 'POST',
-    handler: createUser
+    handler: createUser,
   },
   {
     url: '/:id',
@@ -23,7 +29,7 @@ export const usersRoutes = () => [
   },
   {
     url: '/:id',
-    method: 'PUT',
+    method: 'PATCH',
     handler: updateUser
   },
 

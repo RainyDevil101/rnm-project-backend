@@ -23,7 +23,7 @@ export const categoriesRoutes = () => [
   },
   {
     url: '/:id',
-    method: 'PUT',
+    method: 'PATCH',
     handler: updateCategory
   },
 
