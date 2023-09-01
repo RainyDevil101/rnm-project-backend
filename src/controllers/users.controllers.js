@@ -58,7 +58,6 @@ export const createUser = async (req, reply) => {
     console.error(error);
     return reply.code(400).send({ error: 'Error' })
   }
-
 };
 
 export const deleteUser = async (req, reply) => {
