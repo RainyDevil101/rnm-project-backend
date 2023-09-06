@@ -1,11 +1,26 @@
 import crypto from 'node:crypto';
 import Role from '../models/role.js';
 import { validateRole } from '../schemas/roleSchema.js';
+import { Op } from 'sequelize';
 
 export const getRole = async (req, reply) => {
-  // console.log(req.params.id);
-  const role = await { role: 'Get role' };
-  return reply.code(200).send(role);
+
+  const { id } = req.params;
+
+  try {
+    const role = await Role.findByPk(id, {
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+    });
+    return reply.code(200).send(role);
+  } catch (error) {
+    console.error(error);
+    return reply.code(400).send({ error: 'Error' });
+  };
+
 };
 
 export const getRoles = async (req, reply) => {
@@ -13,7 +28,13 @@ export const getRoles = async (req, reply) => {
   try {
 
     const roles = await Role.findAll();
-    return reply.code(200).send(roles);
+    return reply.code(200).send(roles, {
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+    });
 
   } catch (error) {
 
@@ -35,39 +56,105 @@ export const createRole = async (req, reply) => {
 
     const { name } = result.data;
 
-    const nameExists = await Role.findOne({ 
-      where: {
-        name: name
-      }
-     });
+    const nameExists = await Role.findOne({
+      where: { name }
+    });
 
-     if (nameExists) {
-      return reply.code(400).send({ error: `${name} is already in use.` })
-     };
+    if (nameExists) {
+      return reply.code(400).send({ error: `${name} is already in use.` });
+    };
 
-     const role = new Role({
+    const role = new Role({
       id: crypto.randomUUID(),
       name
-     });
+    });
 
-     await role.save();
+    await role.save();
 
-     return reply.code(200).send({ message: `Role "${name}" created.` });
+    return reply.code(200).send({ message: `Role ${name} has been created.` });
 
   } catch (error) {
 
     console.error(error);
-    return reply.code(400).send({ error: 'Error' })
-  }
+    return reply.code(400).send({ error: 'Error' });
+  };
 
 };
 
 export const deleteRole = async (req, reply) => {
-  const role = await { role: 'Delete role' };
-  return reply.code(200).send(role);
+
+  const { id } = req.params;
+
+  try {
+
+    const role = await Role.findByPk(id, {
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+    });
+
+    if (!role) {
+      return reply.code(400).send({ message: "Role doesn't exits." });
+    };
+
+    await role.update({ status: false });
+
+    return reply.code(200).send(role);
+
+  } catch (error) {
+    console.error(error);
+    return reply.code(400).send({ error: `Error` });
+  };
+
 };
 
 export const updateRole = async (req, reply) => {
-  const role = await { role: 'Put role' };
-  return reply.code(200).send(role);
+
+  const result = await validateRole(req.body);
+
+  if (result.error) {
+    return reply.code(400).send({ error: JSON.parse(result.error.message) });
+  };
+
+  const { id } = req.params;
+
+  try {
+
+    const role = await Role.findByPk(id, {
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+    });
+
+    if (!role) {
+      return reply.code(400).send({ message: "Role doesn't exist" });
+    };
+
+    if (result.data.name) {
+
+      const nameExists = await Role.findOne({
+        where: {
+          name: result.data.name
+        }
+      });
+
+      if (nameExists) {
+        return reply.code(400).send({ error: `${result.data.name} is already in use.` });
+      };
+
+    };
+
+    await role.update(result.data);
+
+    return reply.code(200).send({ message: 'Role updated.' });
+  } catch (error) {
+
+    console.error(error);
+    return reply.code(400).send({ error: `Error` });
+  };
+
 };

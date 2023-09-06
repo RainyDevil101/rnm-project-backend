@@ -1,4 +1,4 @@
-import { billsRoutes, categoriesRoutes, usersRoutes, authRoutes, rolesRoutes } from '../routes/index.js';
+import { expensesRoutes, categoriesRoutes, usersRoutes, authRoutes, rolesRoutes } from '../routes/index.js';
 
 export const routesData = [
   {
@@ -11,7 +11,7 @@ export const routesData = [
   },
   {
     prefix: '/api/bills',
-    routes: billsRoutes(),
+    routes: expensesRoutes(),
   },
   {
     prefix: '/api/auth',

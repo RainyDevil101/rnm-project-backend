@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import Sequelize from 'sequelize';
+import { Op } from 'sequelize';
 import bcryptjs from 'bcryptjs';
 
 import User from '../models/user.js';
@@ -9,17 +9,43 @@ import { validateIfEmailExists } from '../validations/validateIfEmailExists.js';
 
 export const getUser = async (req, reply) => {
   const { id } = req.params;
-  const user = await User.findByPk(id);
-  return reply.code(200).send(user);
+
+  try {
+    const user = await User.findByPk(id, {
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+    });
+    return reply.code(200).send(user);
+  } catch (error) {
+    console.error(error)
+    return reply.code(400).send({ error: 'Error' });
+  };
 };
 
 export const getUsers = async (req, reply) => {
+
+  const { limit = 10, from = 0 } = req.query;
+
+  const offset = (from - 1) * limit;
+
   try {
-    const users = await User.findAll();
-    return reply.code(200).send(users);
+    const users = await User.findAll({
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+      offset,
+      limit: Number(limit)
+    })
+
+    return reply.code(200).send({ users });
   } catch (error) {
     console.error(error);
-    return reply.code(400).send({ error: 'Error' })
+    return reply.code(400).send({ error: 'Error' });
   }
 };
 
@@ -31,7 +57,7 @@ export const createUser = async (req, reply) => {
 
     if (result.error) {
       return reply.code(400).send({ error: JSON.parse(result.error.message) });
-    }
+    };
 
     const { email, ...rest } = result.data;
 
@@ -52,7 +78,7 @@ export const createUser = async (req, reply) => {
 
     await user.save();
 
-    return reply.code(200).send({ message: 'User created' });
+    return reply.code(200).send({ message: `User ${rest.username} has been created.` });
 
   } catch (error) {
     console.error(error);
@@ -66,11 +92,19 @@ export const deleteUser = async (req, reply) => {
 
   try {
 
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(id, {
+      where: {
+        status: {
+          [Op.ne]: false,
+        },
+      },
+    });
 
     if (!user) {
-      return reply.code(400).send({ message: "User doesn't exist." })
+      return reply.code(400).send({ message: "User doesn't exist." });
     };
+
+    await user.update({ status: false });
 
     return reply.code(200).send(user);
 
@@ -92,7 +126,13 @@ export const updateUser = async (req, reply) => {
 
   try {
 
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(id, {
+      where: {
+        sta: {
+          [Op.ne]: false,
+        },
+      },
+    });
 
     if (!user) {
       return reply.code(400).send({ message: "User doesn't exist." })
@@ -103,15 +143,15 @@ export const updateUser = async (req, reply) => {
       const emailExists = await User.findOne({
         where: {
           email: result.data.email,
-          id: { [Sequelize.Op.ne]: id }
+          id: { [Op.ne]: id }
         }
       });
 
       if (emailExists) {
         return reply.code(400).send({ error: `Email ${result.data.email} is already in use.` });
-      }
+      };
 
-    }
+    };
 
     await user.update(result.data);
 

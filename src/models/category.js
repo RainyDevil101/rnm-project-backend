@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import db from '../db/connection.js';
 
-const Role = db.define('role', {
+const Category = db.define('category', {
   id: {
     type: DataTypes.STRING,
     primaryKey: true
@@ -18,4 +18,4 @@ const Role = db.define('role', {
   createdAt: 'createdat'
 });
 
-export default Role;
+export default Category;
