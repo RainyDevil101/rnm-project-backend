@@ -25,9 +25,9 @@ The Home Expense Tracker Web App is a web-based application designed to help you
 - npm run dev
 
 
-Contact
-Author: Alexis Herrera
-Email: aheca96@gmail.com
-GitHub: RainyDevil101
-LinkedIn: www.linkedin.com/in/alexisherrerac
+Contact  
+Author: Alexis Herrera  
+Email: aheca96@gmail.com  
+GitHub: RainyDevil101  
+LinkedIn: www.linkedin.com/in/alexisherrerac  
 Feel free to reach out with any questions or feedback!
