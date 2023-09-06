@@ -1,7 +1,5 @@
 # Home Expense Tracker Web App
 
-![Project Screenshot]([screenshot.png](https://github.com/RainyDevil101/rnm-project-backend/assets/87914235/fae47692-5bb2-4430-bc1e-fed08db85286))
-
 ## Overview
 
 The Home Expense Tracker Web App is a web-based application designed to help you manage and track your household expenses. It allows you to record your expenses, categorize them, and gain insights into your spending habits.
