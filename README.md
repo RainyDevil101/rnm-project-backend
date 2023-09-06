@@ -1,6 +1,7 @@
 # Home Expense Tracker Web App
 
-![Project Screenshot]([screenshot.png](https://github.com/RainyDevil101/rnm-project-backend/assets/87914235/fae47692-5bb2-4430-bc1e-fed08db85286))
+![Project Screenshot](![image](https://github.com/RainyDevil101/rnm-project-backend/assets/87914235/c72520a3-9a8f-46b9-be2e-527d1bdb5f9e)
+)
 
 ## Overview
 
