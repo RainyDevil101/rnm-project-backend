@@ -1,4 +1,7 @@
 import z from 'zod';
+import { getValidRoles } from '../utils/getValidRoles.js';
+
+const validRoles = await getValidRoles();
 
 const userSchema = z.object({
   username: z
@@ -49,10 +52,14 @@ const userSchema = z.object({
     .string({
       invalid_type_error: 'Role must be a string.',
       required_error: 'Role is required.'
-    }),
+    })
+    .refine(value => validRoles.includes(value), {
+      message: 'Invalid role id.'
+    })
 });
 
-export const validateUser = (object) => {
+export const validateUser = async (object) => {
+
 
   return userSchema.safeParseAsync(object);
 

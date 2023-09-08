@@ -12,7 +12,7 @@ export const generateJWT = (uid = '') => {
       expiresIn: '1h'
     }, (err, token) => {
       if (err) {
-        console.error(err);
+        console.log(err);
         reject('Token can not bet generated');
       } else {
         resolve(token);

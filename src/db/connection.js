@@ -6,6 +6,8 @@ const { database, host, password, user } = keys;
 const db = new Sequelize(database, user, password, {
   host,
   dialect: 'postgres',
+
+  logging: false
 });
 
 export default db;

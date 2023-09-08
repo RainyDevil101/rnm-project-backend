@@ -8,13 +8,13 @@ export const getRole = async (req, reply) => {
   const { id } = req.params;
 
   try {
-    const role = await Role.findByPk(id, {
+    const role = await Role.findOne({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        id,
+        status: true,
       },
     });
+
     return reply.code(200).send(role);
   } catch (error) {
     console.error(error);
@@ -27,14 +27,13 @@ export const getRoles = async (req, reply) => {
 
   try {
 
-    const roles = await Role.findAll();
-    return reply.code(200).send(roles, {
+    const roles = await Role.findAll({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        status: true,
       },
     });
+
+    return reply.code(200).send(roles);
 
   } catch (error) {
 
@@ -87,11 +86,10 @@ export const deleteRole = async (req, reply) => {
 
   try {
 
-    const role = await Role.findByPk(id, {
+    const role = await Role.findOne({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        id,
+        status: true,
       },
     });
 
@@ -122,11 +120,10 @@ export const updateRole = async (req, reply) => {
 
   try {
 
-    const role = await Role.findByPk(id, {
+    const role = await Role.findOne({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        id,
+        status: true,
       },
     });
 

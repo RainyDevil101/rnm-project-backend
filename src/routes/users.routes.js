@@ -1,9 +1,5 @@
 import { getUser, createUser, getUsers, deleteUser, updateUser } from '../controllers/users.controllers.js';
-
-const middleware = (req, reply, next) => {
-  console.log('Middleware asdasd');
-  next();
-};
+import { validateJWT } from '../middlewares/validate-jwt.js';
 
 export const usersRoutes = () => [
   {
@@ -15,7 +11,7 @@ export const usersRoutes = () => [
     url: '/',
     method: 'GET',
     handler: getUsers,
-    preHandler: [middleware]
+    preHandler: [validateJWT]
   },
   {
     url: '/',
@@ -25,7 +21,8 @@ export const usersRoutes = () => [
   {
     url: '/:id',
     method: 'DELETE',
-    handler: deleteUser
+    handler: deleteUser,
+    preHandler: [validateJWT]
   },
   {
     url: '/:id',

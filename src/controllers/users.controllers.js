@@ -11,32 +11,30 @@ export const getUser = async (req, reply) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findByPk(id, {
+    const user = await User.findOne({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        id,
+        status: true,
       },
     });
+
     return reply.code(200).send(user);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return reply.code(400).send({ error: 'Error' });
   };
 };
 
 export const getUsers = async (req, reply) => {
 
-  const { limit = 10, from = 0 } = req.query;
+  const { limit = 10, from = 1 } = req.query;
 
   const offset = (from - 1) * limit;
 
   try {
     const users = await User.findAll({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        status: true,
       },
       offset,
       limit: Number(limit)
@@ -89,14 +87,14 @@ export const createUser = async (req, reply) => {
 export const deleteUser = async (req, reply) => {
 
   const { id } = req.params;
+  const uid = req.uid;
 
   try {
 
-    const user = await User.findByPk(id, {
+    const user = await User.findOne({
       where: {
-        status: {
-          [Op.ne]: false,
-        },
+        id,
+        status: true,
       },
     });
 
@@ -106,7 +104,7 @@ export const deleteUser = async (req, reply) => {
 
     await user.update({ status: false });
 
-    return reply.code(200).send(user);
+    return reply.code(200).send({ user, uid });
 
   } catch (error) {
     console.error(error);
@@ -126,11 +124,10 @@ export const updateUser = async (req, reply) => {
 
   try {
 
-    const user = await User.findByPk(id, {
+    const user = await User.findOne({
       where: {
-        sta: {
-          [Op.ne]: false,
-        },
+        id,
+        status: true,
       },
     });
 
@@ -142,8 +139,8 @@ export const updateUser = async (req, reply) => {
 
       const emailExists = await User.findOne({
         where: {
-          email: result.data.email,
-          id: { [Op.ne]: id }
+          id: { [Op.ne]: id },
+          email: result.data.email
         }
       });
 
