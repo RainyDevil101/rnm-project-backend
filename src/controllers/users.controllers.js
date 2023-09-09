@@ -87,14 +87,13 @@ export const createUser = async (req, reply) => {
 export const deleteUser = async (req, reply) => {
 
   const { id } = req.params;
-  const uid = req.uid;
 
   try {
 
     const user = await User.findOne({
       where: {
         id,
-        status: true,
+        status: false,
       },
     });
 
@@ -104,7 +103,7 @@ export const deleteUser = async (req, reply) => {
 
     await user.update({ status: false });
 
-    return reply.code(200).send({ user, uid });
+    return reply.code(200).send( user );
 
   } catch (error) {
     console.error(error);

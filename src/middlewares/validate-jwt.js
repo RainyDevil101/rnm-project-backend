@@ -12,15 +12,19 @@ export const validateJWT = async (req, reply, next) => {
   try {
     const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
 
-    req.user = await User.findOne({
+    const user = await User.findOne({
       where: {
-
+        id: uid,
+        status: true
       }
     });
-    
-    req.uid = uid;
 
-    next();
+    if (!user) {
+      return reply.code(401).send({ error: 'Invalid token. -- User does not exist' });
+    };
+
+    req.user = user.dataValues;
+
   } catch (error) {
     console.log(error);
     return reply.code(401).send({ error: 'Invalid token.' });

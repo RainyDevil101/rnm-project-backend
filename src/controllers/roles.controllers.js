@@ -1,13 +1,13 @@
 import crypto from 'node:crypto';
 import Role from '../models/role.js';
 import { validateRole } from '../schemas/roleSchema.js';
-import { Op } from 'sequelize';
 
 export const getRole = async (req, reply) => {
 
   const { id } = req.params;
 
   try {
+
     const role = await Role.findOne({
       where: {
         id,
@@ -15,10 +15,15 @@ export const getRole = async (req, reply) => {
       },
     });
 
-    return reply.code(200).send(role);
+    if (role) {
+      return reply.code(200).send(role);
+    } else {
+      return reply.code(404).send({ error: 'Role not found,' })
+    }
+
   } catch (error) {
     console.error(error);
-    return reply.code(400).send({ error: 'Error' });
+    return reply.code(500).send({ error: 'Internal server error' });
   };
 
 };
