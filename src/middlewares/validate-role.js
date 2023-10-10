@@ -1,19 +1,34 @@
+import { isValid } from 'zod';
 import { getRoleByName } from '../utils/getValidRoles.js';
 
-const validateRole = (roleToValidate) => async (req, reply, next) => {
-  if (!req.user) {
+const validateRole = (...rolesToValidate) => async (req, reply) => {
+
+  const { user } = req;
+
+  if (!user) {
     return reply.code(500).send({ error: 'Token has not been validated.' });
   };
 
-  const { role_id, username } = req.user;
+  try {
 
-  const response = await getRoleByName(roleToValidate, role_id);
+    const roleChecks = await Promise.all(
+      rolesToValidate.map(async (role) => await getRoleByName(role, user.role_id))
+    );
 
-  if(!response) {
-    return reply.code(501).send({ error: `${username} hast not ${roleToValidate} role.` });
+    if (roleChecks.some((isValid) => isValid)) {
+      return;
+    };
+
+    return reply.code(501).send({ error: `${user.username} does not have a valid role.` });
+
+  } catch (error) {
+    console.error(error);
+    return reply.code(500).send({ error: 'Internal server error' });
   };
+
 
 };
 
 export const validateAdminRole = validateRole('ADMIN');
 export const validateUserRole = validateRole('USER');
+export const validateAdminOrUserRole = validateRole('ADMIN', 'USER');

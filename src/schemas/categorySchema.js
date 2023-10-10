@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const categorySchema = z.object({
+export const categorySchema = z.object({
   name: z
     .string(45, {
       invalid_type_error: 'Name must be a string.',
@@ -9,11 +9,3 @@ const categorySchema = z.object({
     .min(5)
     .max(45)
 });
-
-export const validateCategory = (object) => {
-  return categorySchema.safeParseAsync(object);
-};
-
-export const validatePartialCategory = (object) => {
-  return categorySchema.partial().safeParseAsync(object);
-};

@@ -1,9 +1,9 @@
 import { DataTypes } from 'sequelize';
 import db from '../db/connection.js';
 
-const User = db.define('user', {
+export const User = db.define('user', {
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUIDV4,
     primaryKey: true
   },
   username: {
@@ -25,7 +25,7 @@ const User = db.define('user', {
     type: DataTypes.STRING
   },
   role_id: {
-    type: DataTypes.STRING
+    type: DataTypes.UUIDV4,
   },
   status: {
     type: DataTypes.BOOLEAN

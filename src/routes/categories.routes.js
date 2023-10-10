@@ -1,30 +1,14 @@
 import { getCategory, createCategory, getCategories, deleteCategory, updateCategory } from '../controllers/categories.controllers.js';
+import { validateJWT } from '../middlewares/validate-jwt.js';
+import { validateAdminOrUserRole } from '../middlewares/validate-role.js';
+import { createRoute } from '../utils/createRoute.js';
+
+const commonMiddleware = [validateJWT, validateAdminOrUserRole];
 
 export const categoriesRoutes = () => [
-  {
-    url: '/:id',
-    method: 'GET',
-    handler: getCategory
-  },
-  {
-    url: '/',
-    method: 'GET',
-    handler: getCategories
-  },
-  {
-    url: '/',
-    method: 'POST',
-    handler: createCategory
-  },
-  {
-    url: '/:id',
-    method: 'DELETE',
-    handler: deleteCategory
-  },
-  {
-    url: '/:id',
-    method: 'PATCH',
-    handler: updateCategory
-  },
-
+  createRoute('/:id', 'GET', getCategory, commonMiddleware),
+  createRoute('/', 'GET', getCategories, commonMiddleware),
+  createRoute('/', 'POST', createCategory, commonMiddleware),
+  createRoute('/:id', 'DELETE', deleteCategory, commonMiddleware),
+  createRoute('/:id', 'PATCH', updateCategory, commonMiddleware),
 ];

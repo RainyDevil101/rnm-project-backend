@@ -3,14 +3,13 @@ import { getValidRoles } from '../utils/getValidRoles.js';
 
 const validRoles = await getValidRoles();
 
-const userSchema = z.object({
+export const userSchema = z.object({
   username: z
     .string(45, {
       invalid_type_error: 'Username must be a string.',
       required_error: 'Username is required.'
     })
-    .min(5)
-    .max(45),
+    .min(5),
   password: z
     .string({
       invalid_type_error: 'Password must be a string.',
@@ -23,7 +22,6 @@ const userSchema = z.object({
       required_error: 'Email is required.'
     })
     .min(5)
-    .max(45)
     .email({
       message: 'Email not valid.'
     }),
@@ -32,22 +30,19 @@ const userSchema = z.object({
       invalid_type_error: 'Name must be a string.',
       required_error: 'Name is required.'
     })
-    .min(1)
-    .max(45),
+    .min(1),
   firstlastname: z
     .string(45, {
       invalid_type_error: 'Lastname must be a string.',
       required_error: 'Lastname is required.'
     })
-    .min(1)
-    .max(45),
+    .min(1),
   secondlastname: z
     .string(45, {
       invalid_type_error: 'Lastname must be a string.',
       required_error: 'Lastname is required.'
     })
-    .min(1)
-    .max(45),
+    .min(1),
   role_id: z
     .string({
       invalid_type_error: 'Role must be a string.',
@@ -57,14 +52,3 @@ const userSchema = z.object({
       message: 'Invalid role id.'
     })
 });
-
-export const validateUser = async (object) => {
-
-
-  return userSchema.safeParseAsync(object);
-
-};
-
-export const validatePartialUser = (object) => {
-  return userSchema.partial().safeParseAsync(object);
-};

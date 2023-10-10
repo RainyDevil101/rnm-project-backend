@@ -1,9 +1,9 @@
 import { DataTypes } from 'sequelize';
 import db from '../db/connection.js';
 
-const Category = db.define('category', {
+export const Category = db.define('category', {
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUIDV4,
     primaryKey: true
   },
   name: {
@@ -17,5 +17,3 @@ const Category = db.define('category', {
   updatedAt: 'updatedat',
   createdAt: 'createdat'
 });
-
-export default Category;

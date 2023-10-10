@@ -7,7 +7,6 @@ export const getRole = async (req, reply) => {
   const { id } = req.params;
 
   try {
-
     const role = await Role.findOne({
       where: {
         id,
@@ -15,36 +14,37 @@ export const getRole = async (req, reply) => {
       },
     });
 
-    if (role) {
-      return reply.code(200).send(role);
-    } else {
-      return reply.code(404).send({ error: 'Role not found,' })
+    if (!role) {
+      return reply.code(404).send({ error: 'Role not found.' });
     }
 
+    return reply.send({ role });
   } catch (error) {
     console.error(error);
-    return reply.code(500).send({ error: 'Internal server error' });
+    return reply.code(500).send({ error: 'Internal server error.' });
   };
 
 };
 
 export const getRoles = async (req, reply) => {
 
-  try {
+  const { limit = 10, from = 1 } = req.query;
+  const offset = (from - 1) * limit;
 
+  try {
     const roles = await Role.findAll({
       where: {
         status: true,
       },
+      offset,
+      limit: Number(limit)
     });
 
-    return reply.code(200).send(roles);
-
+    return reply.send(roles);
   } catch (error) {
-
     console.error(error);
-    return reply.code(400).send({ error: 'Error' })
-  }
+    return reply.code(500).send({ error: 'Internal server error.' });
+  };
 
 };
 
