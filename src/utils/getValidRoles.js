@@ -1,4 +1,5 @@
-import Role from '../models/role.js';
+import { Role } from '../models/index.js';
+
 
 export const getValidRoles = async () => {
 

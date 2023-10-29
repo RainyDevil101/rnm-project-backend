@@ -1,5 +1,5 @@
 import Server from './models/server.js';
 
-const server = new Server();
+export const app = new Server();
 
-server.listen();
+app.listen();

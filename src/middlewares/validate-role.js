@@ -1,4 +1,4 @@
-import { isValid } from 'zod';
+// import { isValid } from 'zod';
 import { getRoleByName } from '../utils/getValidRoles.js';
 
 const validateRole = (...rolesToValidate) => async (req, reply) => {

@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import db from '../db/connection.js';
+import { db } from '../db/index.js';
 
 export const User = db.define('user', {
   id: {
@@ -15,15 +15,6 @@ export const User = db.define('user', {
   email: {
     type: DataTypes.STRING
   },
-  name: {
-    type: DataTypes.STRING
-  },
-  firstlastname: {
-    type: DataTypes.STRING
-  },
-  secondlastname: {
-    type: DataTypes.STRING
-  },
   role_id: {
     type: DataTypes.UUIDV4,
   },
@@ -35,5 +26,3 @@ export const User = db.define('user', {
   updatedAt: 'updatedat',
   createdAt: 'createdat'
 });
-
-export default User;

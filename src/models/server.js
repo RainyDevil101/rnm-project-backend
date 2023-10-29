@@ -7,7 +7,7 @@ import cors from '@fastify/cors';
 
 import 'dotenv/config';
 import { routesData, registerRoutes } from '../utils/index.js';
-import db from '../db/connection.js';
+import { db } from '../db/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicFolderPath = path.join(__dirname, '..', '..', 'public');
@@ -34,7 +34,6 @@ class Server {
   async dbConnection() {
     try {
       await db.authenticate();
-      console.log('Database connected!');
     } catch (error) {
       throw new Error(error);
     }
@@ -43,7 +42,10 @@ class Server {
   middlewares() {
 
     // CORS
-    this.app.register(cors, {});
+    this.app.register(cors, {
+      origin: '*', // Cambia esto al origen correcto
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    });
 
     // Public Directory
 

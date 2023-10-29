@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import db from '../db/connection.js';
+import { db } from '../db/index.js';
 
 export const Role = db.define('role', {
   id: {
@@ -17,5 +17,3 @@ export const Role = db.define('role', {
   updatedAt: 'updatedat',
   createdAt: 'createdat'
 });
-
-export default Role;

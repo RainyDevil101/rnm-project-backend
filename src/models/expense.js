@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import db from '../db/connection.js';
+import { db } from '../db/index.js';
 
-export const Expenses = db.define('expenses', {
+export const Expense = db.define('expenses', {
   id: {
     type: DataTypes.UUIDV4,
     primaryKey: true
@@ -12,7 +12,7 @@ export const Expenses = db.define('expenses', {
   description: {
     type: DataTypes.TEXT
   },
-  data: {
+  date: {
     type: DataTypes.DATE
   },
   user_id: {
@@ -26,5 +26,3 @@ export const Expenses = db.define('expenses', {
   updatedAt: 'updatedat',
   createdAt: 'createdat'
 });
-
-export default User;

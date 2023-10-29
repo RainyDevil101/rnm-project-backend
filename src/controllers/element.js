@@ -1,7 +1,5 @@
 import crypto from 'node:crypto';
 import { validateElement, validatePartialElement } from '../validations/validationsBySchema.js';
-// import category from '../models/category.js';
-// import { validateElement } from '../schemas/categorySchema.js';
 
 export class ElementController {
 

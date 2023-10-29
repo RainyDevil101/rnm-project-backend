@@ -1,2 +1,2 @@
-export * from './database';
-export * from './keys';
+export * from './connection.js';
+export * from './keys.js';
