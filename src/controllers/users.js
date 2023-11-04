@@ -26,18 +26,17 @@ export class UserController {
             });
 
             if (!user) {
-                return reply.code(404).send({ error: "User not found." });
+                return reply.code(404).send({ message: "User not found." });
             }
 
             return reply.send(user);
         } catch (error) {
             console.error(error);
-            return reply.code(500).send({ error: "Internal server error." });
+            return reply.code(500).send({ message: "Internal server error." });
         }
     };
 
     getUsers = async (req, reply) => {
-
         const { limit = 10, from = 1 } = req.query;
         const offset = (from - 1) * limit;
 
@@ -53,21 +52,34 @@ export class UserController {
             return reply.send(users);
         } catch (error) {
             console.error(error);
-            return reply.code(500).send({ error: "Internal server error." });
+            return reply.code(500).send({ message: "Internal server error." });
         }
     };
 
     createUser = async (req, reply) => {
         try {
+            if (!req.body) {
+                return reply.code(400).send({ message: "Empty Body" });
+            }
+
+            // req.body.role_id = "29465348-5412-47ad-87c5-3eee60f6eb6f";
+
             const result = await validateElement({
                 input: req.body,
                 schema: this.schema,
             });
 
             if (result.error) {
-                return reply
-                    .code(400)
-                    .send({ error: JSON.parse(result.error.message) });
+                const errors = [];
+                const getErrors = result.error.errors;
+
+                getErrors.forEach((error) => {
+                    errors.push({ error: error.message });
+                });
+
+                console.log(errors);
+
+                return reply.code(400).send(errors);
             }
 
             const { email, ...rest } = result.data;
@@ -77,7 +89,7 @@ export class UserController {
             if (emailExists) {
                 return reply
                     .code(400)
-                    .send({ error: `Email ${email} already exists.` });
+                    .send({ message: `Email ${email} already exists.` });
             }
 
             const salt = bcryptjs.genSaltSync();
@@ -94,7 +106,7 @@ export class UserController {
                 .send({ message: `User ${rest.username} has been created.` });
         } catch (error) {
             console.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 
@@ -118,7 +130,7 @@ export class UserController {
             return reply.code(200).send(user);
         } catch (error) {
             console.error(error);
-            return reply.code(400).send({ error: `Error` });
+            return reply.code(400).send({ message: `Error` });
         }
     };
 
@@ -132,7 +144,7 @@ export class UserController {
             if (result.error) {
                 return reply
                     .code(400)
-                    .send({ error: JSON.parse(result.error.message) });
+                    .send({ message: JSON.parse(result.error.message) });
             }
 
             const { id } = req.params;
@@ -157,11 +169,9 @@ export class UserController {
                 });
 
                 if (emailExists) {
-                    return reply
-                        .code(400)
-                        .send({
-                            error: `Email ${result.data.email} is already in use.`,
-                        });
+                    return reply.code(400).send({
+                        message: `Email ${result.data.email} is already in use.`,
+                    });
                 }
             }
 
@@ -170,7 +180,7 @@ export class UserController {
             return reply.code(200).send({ message: "User updated." });
         } catch (error) {
             console.error(error);
-            return reply.code(400).send({ error: `Error` });
+            return reply.code(400).send({ message: `Error` });
         }
     };
 }
