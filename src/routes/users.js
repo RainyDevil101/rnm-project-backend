@@ -1,9 +1,9 @@
 import { UserController } from "../controllers/index.js";
-import { validateJWT } from "../middlewares/validate-jwt.js";
-import { validateAdminRole } from "../middlewares/validate-role.js";
+import { validateAdminRole, validateJWT, validateIfEmailExists } from "../middlewares/index.js";
 import { createRoute } from "../utils/createRoute.js";
 
 const commonMiddleware = [validateJWT, validateAdminRole];
+const validateEmail = [validateIfEmailExists]
 
 export const createUserRouter = ({ model, schema }) => {
     const userController = new UserController({ model, schema });
@@ -25,7 +25,8 @@ export const createUserRouter = ({ model, schema }) => {
             url: "/",
             method: "POST",
             handler: userController.createUser,
-            // preHandler: commonMiddleware,
+            preHandler: validateEmail,
+
         }),
         createRoute({
             url: "/:id",

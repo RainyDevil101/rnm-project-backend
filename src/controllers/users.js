@@ -4,7 +4,6 @@ import bcryptjs from "bcryptjs";
 
 import {
     validateElement,
-    validateIfEmailExists,
     validatePartialElement,
 } from "../validations/index.js";
 
@@ -62,7 +61,7 @@ export class UserController {
                 return reply.code(400).send({ message: "Empty Body" });
             }
 
-            // req.body.role_id = "29465348-5412-47ad-87c5-3eee60f6eb6f";
+            req.body.role_id = "29465348-5412-47ad-87c5-3eee60f6eb6f";
 
             const result = await validateElement({
                 input: req.body,
@@ -77,33 +76,22 @@ export class UserController {
                     errors.push({ error: error.message });
                 });
 
-                console.log(errors);
-
                 return reply.code(400).send(errors);
             }
 
-            const { email, ...rest } = result.data;
-
-            const emailExists = await validateIfEmailExists(email);
-
-            if (emailExists) {
-                return reply
-                    .code(400)
-                    .send({ message: `Email ${email} already exists.` });
-            }
+            const data = result.data;
 
             const salt = bcryptjs.genSaltSync();
-            rest.password = bcryptjs.hashSync(rest.password, salt);
+            data.password = bcryptjs.hashSync(data.password, salt);
 
             await this.Model.create({
                 id: crypto.randomUUID(),
-                email,
-                ...rest,
+                ...data,
             });
 
             return reply
                 .code(201)
-                .send({ message: `User ${rest.username} has been created.` });
+                .send({ message: `User ${data.username} has been created.` });
         } catch (error) {
             console.error(error);
             return reply.code(500).send({ message: "Internal server error" });
