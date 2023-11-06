@@ -8,7 +8,7 @@ export const validateIfEmailExists = async (req, reply) => {
         if (Boolean(emailExists)) {
             return reply
                 .code(400)
-                .send({ email: `El email ${email} ya se encuentra en uso`, emailExists: true });
+                .send({ error: `El email ${email} ya se encuentra en uso` });
         }
     } catch (error) {
         console.error("Error checking email existence:", error);

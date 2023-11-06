@@ -6,6 +6,7 @@ import {
     validateElement,
     validatePartialElement,
 } from "../validations/index.js";
+import { generateJWT } from "../helpers/generateJWT.js";
 
 export class UserController {
     constructor({ model, schema }) {
@@ -25,13 +26,13 @@ export class UserController {
             });
 
             if (!user) {
-                return reply.code(404).send({ message: "User not found." });
+                return reply.code(404).send({ error: "User not found." });
             }
 
             return reply.send(user);
         } catch (error) {
             console.error(error);
-            return reply.code(500).send({ message: "Internal server error." });
+            return reply.code(500).send({ error: "Internal server error." });
         }
     };
 
@@ -51,14 +52,14 @@ export class UserController {
             return reply.send(users);
         } catch (error) {
             console.error(error);
-            return reply.code(500).send({ message: "Internal server error." });
+            return reply.code(500).send({ error: "Internal server error." });
         }
     };
 
     createUser = async (req, reply) => {
         try {
             if (!req.body) {
-                return reply.code(400).send({ message: "Empty Body" });
+                return reply.code(400).send({ error: "Empty Body" });
             }
 
             req.body.role_id = "29465348-5412-47ad-87c5-3eee60f6eb6f";
@@ -84,17 +85,26 @@ export class UserController {
             const salt = bcryptjs.genSaltSync();
             data.password = bcryptjs.hashSync(data.password, salt);
 
+            const id = crypto.randomUUID();
+
             await this.Model.create({
-                id: crypto.randomUUID(),
+                id,
                 ...data,
             });
 
-            return reply
-                .code(201)
-                .send({ message: `User ${data.username} has been created.` });
+            const userCreated = await this.Model.findOne({
+                where: {
+                    id,
+                    status: true,
+                },
+            });
+
+            const token = await generateJWT(userCreated.dataValues.id);
+
+            return reply.code(201).send({user: userCreated, token});
         } catch (error) {
             console.error(error);
-            return reply.code(500).send({ message: "Internal server error" });
+            return reply.code(500).send({ error: "Internal server error" });
         }
     };
 
@@ -110,7 +120,7 @@ export class UserController {
             });
 
             if (!user) {
-                return reply.code(400).send({ message: "User doesn't exist." });
+                return reply.code(400).send({ error: "User doesn't exist." });
             }
 
             await user.update({ status: false });
@@ -118,7 +128,7 @@ export class UserController {
             return reply.code(200).send(user);
         } catch (error) {
             console.error(error);
-            return reply.code(400).send({ message: `Error` });
+            return reply.code(400).send({ error: `Error` });
         }
     };
 
@@ -132,7 +142,7 @@ export class UserController {
             if (result.error) {
                 return reply
                     .code(400)
-                    .send({ message: JSON.parse(result.error.message) });
+                    .send({ error: JSON.parse(result.error.message) });
             }
 
             const { id } = req.params;
@@ -145,7 +155,7 @@ export class UserController {
             });
 
             if (!user) {
-                return reply.code(400).send({ message: "User doesn't exist." });
+                return reply.code(400).send({ error: "User doesn't exist." });
             }
 
             if (result.data.email) {
@@ -158,7 +168,7 @@ export class UserController {
 
                 if (emailExists) {
                     return reply.code(400).send({
-                        message: `Email ${result.data.email} is already in use.`,
+                        error: `Email ${result.data.email} is already in use.`,
                     });
                 }
             }
@@ -168,7 +178,7 @@ export class UserController {
             return reply.code(200).send({ message: "User updated." });
         } catch (error) {
             console.error(error);
-            return reply.code(400).send({ message: `Error` });
+            return reply.code(400).send({ error: `Error` });
         }
     };
 }
