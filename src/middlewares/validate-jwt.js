@@ -2,9 +2,13 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/index.js";
 
 export const validateJWT = async (req, reply) => {
+
     const token = req.headers["x-token"];
 
+    console.log(token,1111);
+
     if (!token) {
+      console.log('as');
         return reply.code(401).send({ error: "There is not token." });
     }
 
@@ -22,7 +26,7 @@ export const validateJWT = async (req, reply) => {
             return reply
                 .code(401)
                 .send({ error: "Invalid token. -- User does not exist" });
-        }
+        };
 
         req.user = user.dataValues;
     } catch (error) {
