@@ -11,7 +11,7 @@ export const authRoutes = () => [
   },
   {
     url: '/refresh-token',
-    method: 'POST',
+    method: 'GET',
     handler: refreshToken,
     preHandler: commonMiddleware
   }

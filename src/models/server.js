@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import cors from '@fastify/cors';
+import cookie from '@fastify/cookie';
 
 import 'dotenv/config';
 import { routesData, registerRoutes } from '../utils/index.js';
@@ -59,6 +60,10 @@ class Server {
         }
       }
     });
+
+    this.app.register(cookie, {
+      secret: process.env.PORTLH,
+    })
 
   };
 

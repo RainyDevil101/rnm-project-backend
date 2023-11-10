@@ -3,8 +3,9 @@ import {
     roleSchema,
     userSchema,
     expenseSchema,
+    accountSchema
 } from "../schemas/index.js";
-import { Category, Role, User, Expense } from "../models/index.js";
+import { Category, Role, User, Expense, Account } from "../models/index.js";
 import {
     authRoutes,
     createElementRouter,
@@ -33,6 +34,10 @@ export const routesData = [
     },
     {
         prefix: "/v1/roles",
+        routes: createElementRouter({ model: Role, schema: roleSchema }),
+    },
+    {
+        prefix: "/v1/accounts",
         routes: createElementRouter({ model: Role, schema: roleSchema }),
     },
 ];

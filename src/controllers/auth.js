@@ -42,7 +42,13 @@ export const refreshToken = async (req, reply) => {
     return reply.code(400).send({ error: "Invalid user" });
   }
 
-  const token = await generateJWT(user.id);
+  try {
 
-  return reply.send({ user, token });
+    const token = await generateJWT(user.id);
+
+    return reply.code(200).send({ token, user });
+  } catch (error) {
+    return reply.code(400).send({ error: error });
+  }
+
 };
