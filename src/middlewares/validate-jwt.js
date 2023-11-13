@@ -5,9 +5,7 @@ export const validateJWT = async (req, reply) => {
 
     const token = req.headers["x-token"];
 
-    console.log(req.headers);
-
-    console.log(token,1111);
+    console.log(token);
 
     if (!token) {
       console.log('as');

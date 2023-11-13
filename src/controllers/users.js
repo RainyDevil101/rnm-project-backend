@@ -47,18 +47,19 @@ export class UserController {
                 },
                 offset,
                 limit: Number(limit),
-            });
-
-            return reply.send(users);
-        } catch (error) {
-            console.error(error);
-            return reply.code(500).send({ error: "Internal server error." });
-        }
-    };
-
-    createUser = async (req, reply) => {
-        try {
-            if (!req.body) {
+              });
+              
+              return reply.send(users);
+            } catch (error) {
+              console.error(error);
+              return reply.code(500).send({ error: "Internal server error." });
+            }
+          };
+          
+          createUser = async (req, reply) => {
+            
+            try {
+              if (!req.body) {
                 return reply.code(400).send({ error: "Empty Body" });
             }
 
@@ -101,7 +102,8 @@ export class UserController {
 
             const token = await generateJWT(userCreated.dataValues.id);
 
-            return reply.code(201).send({user: userCreated, token});
+
+            return reply.code(200).send({user: userCreated, token});
         } catch (error) {
             console.error(error);
             return reply.code(500).send({ error: "Internal server error" });
