@@ -38,6 +38,6 @@ export const routesData = [
     },
     {
         prefix: "/v1/accounts",
-        routes: createElementRouter({ model: Role, schema: roleSchema }),
+        routes: createElementRouter({ model: Account, schema: Account }),
     },
 ];

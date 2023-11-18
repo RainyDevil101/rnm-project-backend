@@ -3,9 +3,7 @@ import { User } from "../models/index.js";
 
 export const validateJWT = async (req, reply) => {
 
-    const token = req.headers["x-token"];
-
-    console.log(token);
+    const token = req.headers["x-token"];;
 
     if (!token) {
       console.log('as');

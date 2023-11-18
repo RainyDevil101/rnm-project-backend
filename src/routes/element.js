@@ -1,10 +1,10 @@
 import { ElementController } from "../controllers/index.js";
 import { validateJWT } from "../middlewares/validate-jwt.js";
-import { validateAdminRole } from "../middlewares/validate-role.js";
+import { validateAdminOrUserRole, validateAdminRole } from "../middlewares/validate-role.js";
 import { createRoute } from "../utils/createRoute.js";
 
 export const createElementRouter = ({ model, schema }) => {
-    const commonMiddleware = [validateJWT, validateAdminRole];
+    const commonMiddleware = [validateJWT, validateAdminOrUserRole];
 
     const elementController = new ElementController({ model, schema });
 

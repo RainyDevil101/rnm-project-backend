@@ -13,7 +13,7 @@ export const login = async (req, reply) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      return reply.code(400).send({ error: "Invalid user or password" });
+      return reply.code(400).send({ error: "Usuario o contraseña no válidos" });
     }
 
     if (!user.dataValues.status) {
@@ -23,7 +23,7 @@ export const login = async (req, reply) => {
     const validPassword = await bcryptjs.compare(password, user.dataValues.password);
 
     if (!validPassword) {
-      return reply.code(400).send({ error: "Invalid user or password" });
+      return reply.code(400).send({ error: "Usuario o contraseña no válidos" });
     }
 
     const token = await generateJWT(user.dataValues.id);

@@ -12,6 +12,12 @@ export const Account = db.define('accounts', {
   user_id: {
     type: DataTypes.UUIDV4,
   },
+  icon_name: {
+    type: DataTypes.STRING
+  },
+  color_hex: {
+    type: DataTypes.STRING
+  }
 }, {
   timestamps: true,
   updatedAt: 'updatedat',

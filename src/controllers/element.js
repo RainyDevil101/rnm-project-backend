@@ -13,10 +13,12 @@ export class ElementController {
     const { limit = 10, from = 1 } = req.query;
 
     const offset = (from - 1) * limit;
+    const user_id = req.user.id;
 
     try {
       const elements = await this.Element.findAll({
         where: {
+          user_id,
           status: true
         },
         offset,
