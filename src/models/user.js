@@ -20,7 +20,7 @@ export const User = db.define('user', {
   },
   status: {
     type: DataTypes.BOOLEAN
-  }
+  },
 }, {
   timestamps: true,
   updatedAt: 'updatedat',

@@ -55,6 +55,10 @@ export class ElementController {
 
   createElement = async (req, reply) => {
 
+    console.log(req.body);
+
+    return;
+
     try {
 
       const result = await validateElement({ input: req.body, schema: this.schema });

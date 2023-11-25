@@ -12,15 +12,9 @@ export const Expense = db.define('expenses', {
   description: {
     type: DataTypes.TEXT
   },
-  date: {
-    type: DataTypes.DATE
+  status: {
+    type: DataTypes.BOOLEAN
   },
-  user_id: {
-    type: DataTypes.UUIDV4,
-  },
-  category_id: {
-    type: DataTypes.UUIDV4,
-  }
 }, {
   timestamps: true,
   updatedAt: 'updatedat',

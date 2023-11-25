@@ -11,7 +11,7 @@ export const Category = db.define('category', {
   },
   status: {
     type: DataTypes.BOOLEAN
-  }
+  },
 }, {
   timestamps: true,
   updatedAt: 'updatedat',

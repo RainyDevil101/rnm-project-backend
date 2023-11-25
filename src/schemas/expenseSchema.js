@@ -15,7 +15,6 @@ export const expenseSchema = z.object({
         invalid_type_error: "Description must be a string.",
         required_error: "Description is required.",
     }),
-    date: z.date(),
     user_id: z.string().uuid(),
-    category_id: z.string().uuid(),
+    account_id: z.string().uuid(),
 });

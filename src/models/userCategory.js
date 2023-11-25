@@ -1,28 +1,16 @@
 import { DataTypes } from 'sequelize';
 import { db } from '../db/index.js';
 
-export const Account = db.define('accounts', {
+export const UserCategory = db.define('user_category', {
   id: {
     type: DataTypes.UUIDV4,
     primaryKey: true
   },
-  name: {
-    type: DataTypes.STRING
-  },
   user_id: {
     type: DataTypes.UUIDV4,
   },
-  user_category_id: {
-    type: DataTypes.UUIDV4
-  },
-  color_hex: {
-    type: DataTypes.STRING
-  },
-  currency_name: {
-    type: DataTypes.STRING
-  },
-  currency_code: {
-    type: DataTypes.STRING
+  category_id: {
+    type: DataTypes.UUIDV4,
   },
   status: {
     type: DataTypes.BOOLEAN
