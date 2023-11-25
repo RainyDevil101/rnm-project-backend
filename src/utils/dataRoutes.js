@@ -1,12 +1,10 @@
 import {
-  categorySchema,
   roleSchema,
   userSchema,
   expenseSchema,
   accountSchema,
-  userCategorySchema
 } from "../schemas/index.js";
-import { Category, Role, User, Expense, Account, UserCategory } from "../models/index.js";
+import { Role, User, Expense, Account } from "../models/index.js";
 import {
   authRoutes,
   createElementRouter,
@@ -17,13 +15,6 @@ export const routesData = [
   {
     prefix: "/v1/users",
     routes: createUserRouter({ model: User, schema: userSchema }),
-  },
-  {
-    prefix: "/v1/categories",
-    routes: createElementRouter({
-      model: Category,
-      schema: categorySchema,
-    }),
   },
   {
     prefix: "/v1/expenses",
@@ -41,8 +32,5 @@ export const routesData = [
     prefix: "/v1/accounts",
     routes: createElementRouter({ model: Account, schema: accountSchema }),
   },
-  {
-    prefix: "/v1/user_category",
-    routes: createElementRouter({ model: UserCategory, schema: userCategorySchema }),
-  },
+
 ];

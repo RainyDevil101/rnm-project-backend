@@ -4,7 +4,7 @@ import { validateElement, validatePartialElement } from '../validations/validati
 export class ElementController {
 
   constructor({ model, schema }) {
-    this.Element = model;
+    this.Model = model;
     this.schema = schema;
   };
 
@@ -16,7 +16,7 @@ export class ElementController {
     const user_id = req.user.id;
 
     try {
-      const elements = await this.Element.findAll({
+      const elements = await this.Model.findAll({
         where: {
           user_id,
           status: true
@@ -39,7 +39,7 @@ export class ElementController {
 
     try {
 
-      const element = await this.Element.findOne({
+      const element = await this.Model.findOne({
         where: {
           id,
           status: true,
@@ -55,10 +55,6 @@ export class ElementController {
 
   createElement = async (req, reply) => {
 
-    console.log(req.body);
-
-    return;
-
     try {
 
       const result = await validateElement({ input: req.body, schema: this.schema });
@@ -67,24 +63,20 @@ export class ElementController {
         return reply.code(400).send({ error: JSON.parse(result.error.message) });
       };
 
-      const { name } = result.data;
+      const { data } = result;
 
-      const nameExists = await this.Element.findOne({
-        where: { name }
-      });
-
-      if (nameExists) {
-        return reply.code(400).send({ error: `${name} is already in use.` });
-      };
-
-      const element = new this.Element({
+      const element = new this.Model({
         id: crypto.randomUUID(),
-        name,
+        ...data
       });
 
-      await element.save();
+      const newElement = await element.save().then(function (newElement) {
+        return newElement;
+      });
 
-      return reply.code(200).send({ message: `${name} has been created.` });
+      console.log(newElement);
+
+      return reply.code(200).send(newElement);
 
     } catch (error) {
       console.error(error);
@@ -100,7 +92,7 @@ export class ElementController {
 
     try {
 
-      const element = await this.Element.findOne({
+      const element = await this.Model.findOne({
         where: {
           id,
           status: true,
@@ -108,7 +100,7 @@ export class ElementController {
       });
 
       if (!element) {
-        return reply.code(400).send({ error: "this.Element doesn't exist." })
+        return reply.code(400).send({ error: "Doesn't exist." })
       };
 
       await element.update({ status: false });
@@ -135,7 +127,7 @@ export class ElementController {
 
     if (resultValidation.error) return reply.code(400).send({ error: JSON.parse(result.error.message) });
 
-    const element = await this.Element.findOne({
+    const element = await this.Model.findOne({
       where: {
         id,
         status: true,
@@ -143,7 +135,7 @@ export class ElementController {
     })
 
     if (!element) {
-      return reply.code(400).send({ error: "this.Element doesn't exist." })
+      return reply.code(400).send({ error: "Doesn't exist." })
     };
 
     await element.update({});

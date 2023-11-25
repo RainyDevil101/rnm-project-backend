@@ -9,7 +9,7 @@ export const userSchema = z.object({
             invalid_type_error: "Username must be a string.",
             required_error: "Username is required.",
         })
-        .min(5),
+        .min(1),
     password: z
         .string({
             invalid_type_error: "Password must be a string.",

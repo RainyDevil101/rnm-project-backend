@@ -12,13 +12,13 @@ export const Account = db.define('accounts', {
   user_id: {
     type: DataTypes.UUIDV4,
   },
-  user_category_id: {
-    type: DataTypes.UUIDV4
-  },
   color_hex: {
     type: DataTypes.STRING
   },
   currency_name: {
+    type: DataTypes.STRING
+  },
+  icon_url: {
     type: DataTypes.STRING
   },
   currency_code: {
