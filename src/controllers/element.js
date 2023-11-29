@@ -10,20 +10,26 @@ export class ElementController {
 
   getElements = async (req, reply) => {
 
-    const { limit = 10, from = 1 } = req.query;
-
-    const offset = (from - 1) * limit;
+    const { limit = null, from = null } = req.query;
     const user_id = req.user.id;
 
     try {
-      const elements = await this.Model.findAll({
+      let queryOptions = {
         where: {
           user_id,
           status: true
         },
-        offset,
+        offset: (from - 1) * limit,
         limit: Number(limit)
-      });
+      };
+
+      if (!limit && !from) {
+        // Si no están presentes, no aplicamos limit ni offset
+        delete queryOptions.offset;
+        delete queryOptions.limit;
+      };
+
+      const elements = await this.Model.findAll(queryOptions);
 
       return reply.code(200).send(elements);
     } catch (error) {
@@ -55,13 +61,15 @@ export class ElementController {
 
   createElement = async (req, reply) => {
 
-    console.log(req.body);
-
-    return;
-
     try {
 
-      const result = await validateElement({ input: req.body, schema: this.schema });
+      if (!req.user) return reply.code(400).send({ error: 'Invalid user' });
+
+      const user_id = req.user.id;
+
+      const elementData = { ...req.body, user_id };
+
+      const result = await validateElement({ input: elementData, schema: this.schema });
 
       if (result.error) {
         return reply.code(400).send({ error: JSON.parse(result.error.message) });
@@ -71,6 +79,7 @@ export class ElementController {
 
       const element = new this.Model({
         id: crypto.randomUUID(),
+        user_id,
         ...data
       });
 

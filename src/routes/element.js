@@ -4,42 +4,42 @@ import { validateAdminOrUserRole, validateAdminRole } from "../middlewares/valid
 import { createRoute } from "../utils/createRoute.js";
 
 export const createElementRouter = ({ model, schema }) => {
-    const commonMiddleware = [validateJWT, validateAdminOrUserRole];
+  const commonMiddleware = [validateJWT, validateAdminOrUserRole];
 
-    const elementController = new ElementController({ model, schema });
+  const elementController = new ElementController({ model, schema });
 
-    const elementRoutes = [
-        createRoute({
-            url: "/:id",
-            method: "GET",
-            handler: elementController.getElement,
-            preHandler: commonMiddleware,
-        }),
-        createRoute({
-            url: "/",
-            method: "GET",
-            handler: elementController.getElements,
-            preHandler: commonMiddleware,
-        }),
-        createRoute({
-            url: "/",
-            method: "POST",
-            handler: elementController.createElement,
-            preHandler: commonMiddleware,
-        }),
-        createRoute({
-            url: "/:id",
-            method: "DELETE",
-            handler: elementController.deleteElement,
-            preHandler: commonMiddleware,
-        }),
-        createRoute({
-            url: "/:id",
-            method: "PATCH",
-            handler: elementController.updateElement,
-            preHandler: commonMiddleware,
-        }),
-    ];
+  const elementRoutes = [
+    createRoute({
+      url: "/:id",
+      method: "GET",
+      handler: elementController.getElement,
+      preHandler: commonMiddleware,
+    }),
+    createRoute({
+      url: "/",
+      method: "GET",
+      handler: elementController.getElements,
+      preHandler: commonMiddleware,
+    }),
+    createRoute({
+      url: "/",
+      method: "POST",
+      handler: elementController.createElement,
+      preHandler: commonMiddleware,
+    }),
+    createRoute({
+      url: "/:id",
+      method: "DELETE",
+      handler: elementController.deleteElement,
+      preHandler: commonMiddleware,
+    }),
+    createRoute({
+      url: "/:id",
+      method: "PATCH",
+      handler: elementController.updateElement,
+      preHandler: commonMiddleware,
+    }),
+  ];
 
-    return elementRoutes;
+  return elementRoutes;
 };
