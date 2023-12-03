@@ -3,10 +3,9 @@ import { User } from "../models/index.js";
 
 export const validateJWT = async (req, reply) => {
 
-  const token = req.headers["x-token"];;
+  const token = req.headers["x-token"];
 
   if (!token) {
-    console.log('as');
     return reply.code(401).send({ error: "There is not token." });
   }
 

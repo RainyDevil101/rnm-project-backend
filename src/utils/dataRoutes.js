@@ -11,14 +11,21 @@ import {
   createUserRouter,
 } from "../routes/index.js";
 
+import {
+  userName,
+  expenseName,
+  roleName,
+  accountName
+} from "./index.js";
+
 export const routesData = [
   {
     prefix: "/v1/users",
-    routes: createUserRouter({ model: User, schema: userSchema }),
+    routes: createUserRouter({ model: User, schema: userSchema, name: userName }),
   },
   {
     prefix: "/v1/expenses",
-    routes: createElementRouter({ model: Expense, schema: expenseSchema }),
+    routes: createElementRouter({ model: Expense, schema: expenseSchema, name: expenseName }),
   },
   {
     prefix: "/v1/auth",
@@ -26,11 +33,11 @@ export const routesData = [
   },
   {
     prefix: "/v1/roles",
-    routes: createElementRouter({ model: Role, schema: roleSchema }),
+    routes: createElementRouter({ model: Role, schema: roleSchema, name: roleName }),
   },
   {
     prefix: "/v1/accounts",
-    routes: createElementRouter({ model: Account, schema: accountSchema }),
+    routes: createElementRouter({ model: Account, schema: accountSchema, name: accountName }),
   },
 
 ];

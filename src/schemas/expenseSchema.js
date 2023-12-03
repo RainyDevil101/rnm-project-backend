@@ -15,6 +15,10 @@ export const expenseSchema = z.object({
     invalid_type_error: "Description must be a string.",
     required_error: "Description is required.",
   }),
+  type: z.string(255, {
+    invalid_type_error: "Type must be a string.",
+    required_error: "Type is required.",
+  }),
   user_id: z.string().uuid(),
   account_id: z.string().uuid(),
 });

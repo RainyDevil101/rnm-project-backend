@@ -52,3 +52,9 @@ export const refreshToken = async (req, reply) => {
   }
 
 };
+
+export const validateToken = async (req, reply) => {
+
+  return reply.code(200).send({ validated: true });
+
+};

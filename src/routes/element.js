@@ -3,10 +3,10 @@ import { validateJWT } from "../middlewares/validate-jwt.js";
 import { validateAdminOrUserRole, validateAdminRole } from "../middlewares/validate-role.js";
 import { createRoute } from "../utils/createRoute.js";
 
-export const createElementRouter = ({ model, schema }) => {
+export const createElementRouter = ({ model, schema, name }) => {
   const commonMiddleware = [validateJWT, validateAdminOrUserRole];
 
-  const elementController = new ElementController({ model, schema });
+  const elementController = new ElementController({ model, schema, name });
 
   const elementRoutes = [
     createRoute({

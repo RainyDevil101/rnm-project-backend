@@ -1,19 +1,24 @@
 import crypto from 'node:crypto';
 import { validateElement, validatePartialElement } from '../validations/validationsBySchema.js';
+import { insertElementInDB, handleNewAccount, createModel } from '../helpers/index.js';
 
 export class ElementController {
 
-  constructor({ model, schema }) {
+  constructor({ model, schema, name = null }) {
     this.Model = model;
     this.schema = schema;
+    this.name = name;
   };
+
 
   getElements = async (req, reply) => {
 
     const { limit = null, from = null } = req.query;
-    const user_id = req.user.id;
 
     try {
+
+      const user_id = req.user.id;
+
       let queryOptions = {
         where: {
           user_id,
@@ -23,8 +28,12 @@ export class ElementController {
         limit: Number(limit)
       };
 
+      if (req.headers["account-id"]) {
+        const accountId = req.headers["account-id"];
+        queryOptions.where.account_id = accountId;
+      }
+
       if (!limit && !from) {
-        // Si no están presentes, no aplicamos limit ni offset
         delete queryOptions.offset;
         delete queryOptions.limit;
       };
@@ -77,19 +86,26 @@ export class ElementController {
 
       const { data } = result;
 
-      const element = new this.Model({
-        id: crypto.randomUUID(),
-        user_id,
-        ...data
-      });
+      const { element } = createModel({ data, model: this.Model });
 
-      const newElement = await element.save().then(function (newElement) {
-        return newElement;
-      });
+      const { newElement } = await insertElementInDB(element);
 
-      console.log(newElement);
+      if (!newElement) {
+        return reply.code(400).send({ error: 'Error' });
+      }
 
-      return reply.code(200).send(newElement);
+      if (this.name === 'account') {
+
+
+        const { newElement: newExpense } = await handleNewAccount({ user_id, account_id: newElement.id, amount: req.body.amount });
+
+        console.log(newElement, newExpense, 123);
+
+        return reply.code(200).send({ newAccount: newElement, newExpense });
+
+      };
+
+      return reply.code(200).send({ newAccount: newElement, newExpense: null });
 
     } catch (error) {
       console.error(error);
