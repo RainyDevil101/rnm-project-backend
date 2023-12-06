@@ -7,7 +7,7 @@ export const Expense = db.define('expenses', {
     primaryKey: true
   },
   amount: {
-    type: DataTypes.NUMBER
+    type: DataTypes.FLOAT
   },
   description: {
     type: DataTypes.TEXT

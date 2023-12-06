@@ -1,6 +1,6 @@
-import crypto from 'node:crypto';
 import { validateElement, validatePartialElement } from '../validations/validationsBySchema.js';
 import { insertElementInDB, handleNewAccount, createModel } from '../helpers/index.js';
+import { Expense } from '../models/expense.js';
 
 export class ElementController {
 
@@ -19,7 +19,7 @@ export class ElementController {
 
       const user_id = req.user.id;
 
-      let queryOptions = {
+      const commonConfig = {
         where: {
           user_id,
           status: true
@@ -28,19 +28,41 @@ export class ElementController {
         limit: Number(limit)
       };
 
+      let queryOptions;
+
       if (req.headers["account-id"]) {
         const accountId = req.headers["account-id"];
-        queryOptions.where.account_id = accountId;
-      }
+        queryOptions = {
+          ...commonConfig,
+          where: {
+            ...commonConfig.where,
+            account_id: accountId
+          }
+        };
+      } else {
+        queryOptions = commonConfig;
+      };
 
       if (!limit && !from) {
         delete queryOptions.offset;
         delete queryOptions.limit;
       };
 
-      const elements = await this.Model.findAll(queryOptions);
+      let result;
 
-      return reply.code(200).send(elements);
+      if (this.name === 'account') {
+        result = await this.Model.findAll({
+          ...commonConfig,
+          include: {
+            model: Expense,
+            as: 'expenses',
+          },
+        });
+      } else {
+        result = await this.Model.findAll(queryOptions);
+      }
+
+      return reply.code(200).send(result);
     } catch (error) {
       console.error(error);
       return reply.code(400).send({ error: 'Error' });
@@ -98,8 +120,6 @@ export class ElementController {
 
 
         const { newElement: newExpense } = await handleNewAccount({ user_id, account_id: newElement.id, amount: req.body.amount });
-
-        console.log(newElement, newExpense, 123);
 
         return reply.code(200).send({ newAccount: newElement, newExpense });
 

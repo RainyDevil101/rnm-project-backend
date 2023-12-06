@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { db } from '../db/index.js';
+import { Expense } from './expense.js';
 
 export const Account = db.define('accounts', {
   id: {
@@ -32,3 +33,5 @@ export const Account = db.define('accounts', {
   updatedAt: 'updatedat',
   createdAt: 'createdat'
 });
+
+Account.hasMany(Expense, {foreignKey: 'account_id', as: 'expenses'});
