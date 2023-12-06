@@ -1,6 +1,7 @@
 import { validateElement, validatePartialElement } from '../validations/validationsBySchema.js';
 import { insertElementInDB, handleNewAccount, createModel } from '../helpers/index.js';
 import { Expense } from '../models/expense.js';
+import { getCommonConfig, getQueryOptions } from '../utils/index.js';
 
 export class ElementController {
 
@@ -13,45 +14,21 @@ export class ElementController {
 
   getElements = async (req, reply) => {
 
-    const { limit = null, from = null } = req.query;
-
     try {
 
+      const { limit = null, from = null } = req.query;
       const user_id = req.user.id;
 
-      const commonConfig = {
-        where: {
-          user_id,
-          status: true
-        },
-        offset: (from - 1) * limit,
-        limit: Number(limit)
-      };
+      // Obtener configuración común
+      const commonConfig = getCommonConfig(user_id, limit, from);
 
-      let queryOptions;
+      // Obtener opciones de consulta
+      const queryOptions = getQueryOptions(req.headers, commonConfig);
 
-      if (req.headers["account-id"]) {
-        const accountId = req.headers["account-id"];
-        queryOptions = {
-          ...commonConfig,
-          where: {
-            ...commonConfig.where,
-            account_id: accountId
-          }
-        };
-      } else {
-        queryOptions = commonConfig;
-      };
-
-      if (!limit && !from) {
-        delete queryOptions.offset;
-        delete queryOptions.limit;
-      };
-
-      let result;
-
+      // Obtener elementos según el nombre
+      let elements;
       if (this.name === 'account') {
-        result = await this.Model.findAll({
+        elements = await this.Model.findAll({
           ...commonConfig,
           include: {
             model: Expense,
@@ -59,10 +36,21 @@ export class ElementController {
           },
         });
       } else {
-        result = await this.Model.findAll(queryOptions);
+        elements = await this.Model.findAll(queryOptions);
       }
 
-      return reply.code(200).send(result);
+      // Calcular el total de los gastos si el nombre es 'account'
+      let totalAmountExpense = 0;
+      if (this.name === 'account') {
+        elements.forEach((account) => {
+          console.log(account.expenses);
+          account.expenses.forEach((expense) => {
+            totalAmountExpense += parseFloat(expense.amount);
+          });
+        });
+      }
+
+      return reply.code(200).send({ elements, totalAmountExpense });
     } catch (error) {
       console.error(error);
       return reply.code(400).send({ error: 'Error' });
