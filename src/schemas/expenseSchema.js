@@ -21,4 +21,5 @@ export const expenseSchema = z.object({
   }),
   user_id: z.string().uuid(),
   account_id: z.string().uuid(),
+  createdat: z.string()
 });

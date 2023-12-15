@@ -39,18 +39,7 @@ export class ElementController {
         elements = await this.Model.findAll(queryOptions);
       }
 
-      // Calcular el total de los gastos si el nombre es 'account'
-      let totalAmountExpense = 0;
-      if (this.name === 'account') {
-        elements.forEach((account) => {
-          console.log(account.expenses);
-          account.expenses.forEach((expense) => {
-            totalAmountExpense += parseFloat(expense.amount);
-          });
-        });
-      }
-
-      return reply.code(200).send({ elements, totalAmountExpense });
+      return reply.code(200).send({ elements });
     } catch (error) {
       console.error(error);
       return reply.code(400).send({ error: 'Error' });
@@ -82,30 +71,44 @@ export class ElementController {
 
     try {
 
-      if (!req.user) return reply.code(400).send({ error: 'Invalid user' });
+      // Verificar si el usuario es válido
+      if (!req.user) {
+        return reply.code(400).send({ error: 'Invalid user' });
+      };
 
+      // Obtener el ID del usuario
       const user_id = req.user.id;
 
+      // Preparar los datos del elemento con el ID del usuario
       const elementData = { ...req.body, user_id };
 
+      // Validar los datos del elemento
       const result = await validateElement({ input: elementData, schema: this.schema });
 
+      // Manejar errores de validación
       if (result.error) {
+        console.error(error);
         return reply.code(400).send({ error: JSON.parse(result.error.message) });
       };
 
+      // Extraer los datos validados
       const { data } = result;
 
+      // Crear un modelo a partir de los datos
       const { element } = createModel({ data, model: this.Model });
 
+      // Insertar el elemento en la base de datos
       const { newElement } = await insertElementInDB(element);
 
+      console.log(newElement);
+
+      // Manejar errores al insertar el elemento
       if (!newElement) {
         return reply.code(400).send({ error: 'Error' });
       }
 
+      // Si el nombre es 'account', manejar la creación de un nuevo gasto
       if (this.name === 'account') {
-
 
         const { newElement: newExpense } = await handleNewAccount({ user_id, account_id: newElement.id, amount: req.body.amount });
 
@@ -113,11 +116,12 @@ export class ElementController {
 
       };
 
-      return reply.code(200).send({ newAccount: newElement, newExpense: null });
+      // Enviar la respuesta con el nuevo elemento de cuenta
+      return reply.code(200).send({ newElement: newElement });
 
     } catch (error) {
       console.error(error);
-      return reply.code(400).send({ error: 'Error' });
+      return reply.code(400).send({ error: error });
     };
 
   };
