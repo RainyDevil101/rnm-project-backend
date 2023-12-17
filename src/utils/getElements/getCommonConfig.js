@@ -9,6 +9,7 @@ export const getCommonConfig = (user_id, limit, from) => {
         user_id,
         status: true
       },
+      order: [['createdat', 'ASC']],
       offset: (from - 1) * limit,
       limit: Number(limit)
     };

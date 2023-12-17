@@ -1,7 +1,7 @@
 import { validateElement, validatePartialElement } from '../validations/validationsBySchema.js';
 import { insertElementInDB, handleNewAccount, createModel } from '../helpers/index.js';
 import { Expense } from '../models/expense.js';
-import { getCommonConfig, getQueryOptions } from '../utils/index.js';
+import { getCommonConfig, getQueryOptions, deleteExpensesRelationated } from '../utils/index.js';
 
 export class ElementController {
 
@@ -17,6 +17,7 @@ export class ElementController {
     try {
 
       const { limit = null, from = null } = req.query;
+
       const user_id = req.user.id;
 
       // Obtener configuración común
@@ -28,12 +29,21 @@ export class ElementController {
       // Obtener elementos según el nombre
       let elements;
       if (this.name === 'account') {
-        elements = await this.Model.findAll({
+        // Obtén las cuentas con sus gastos asociados
+        const accountsWithExpenses = await this.Model.findAll({
           ...commonConfig,
           include: {
             model: Expense,
             as: 'expenses',
           },
+        });
+
+        // Ordena cada cuenta junto con sus gastos asociados
+        elements = accountsWithExpenses.map(account => {
+          return {
+            ...account.toJSON(),
+            expenses: account.expenses.sort((a, b) => new Date(b.createdat) - new Date(a.createdat)),
+          };
         });
       } else {
         elements = await this.Model.findAll(queryOptions);
@@ -100,8 +110,6 @@ export class ElementController {
       // Insertar el elemento en la base de datos
       const { newElement } = await insertElementInDB(element);
 
-      console.log(newElement);
-
       // Manejar errores al insertar el elemento
       if (!newElement) {
         return reply.code(400).send({ error: 'Error' });
@@ -126,13 +134,24 @@ export class ElementController {
 
   };
 
+  /**
+ * Controlador para eliminar un elemento del modelo.
+ * @param {Object} req - Objeto de solicitud (Request) de Fastify.
+ * @param {Object} reply - Objeto de respuesta (Reply) de Fastify.
+ * @returns {Object} - Objeto de respuesta que indica el resultado de la operación.
+ */
+
   deleteElement = async (req, reply) => {
 
-    const { id } = req.params;
-    const uid = req.uid;
-
     try {
+      const { id } = req.params;
 
+      // Validar si el ID está presente en la solicitud
+      if (!id) {
+        return reply.code(400).send({ error: "Id needed" });
+      }
+
+      // Buscar el elemento en la base de datos
       const element = await this.Model.findOne({
         where: {
           id,
@@ -140,18 +159,31 @@ export class ElementController {
         },
       });
 
+      // Verificar si el elemento existe
       if (!element) {
-        return reply.code(400).send({ error: "Doesn't exist." })
-      };
+        return reply.code(400).send({ error: "Invalid element" });
+      }
 
-      await element.update({ status: false });
+      // Si el elemento es de tipo 'account', eliminar gastos relacionados
+      if (this.name === 'account') {
+        const deleteExpensesResult = await deleteExpensesRelationated({ id });
 
-      return reply.code(200).send({ element, uid });
+        // Manejar errores al eliminar gastos relacionados
+        if (deleteExpensesResult.error) {
+          return reply.code(500).send({ error: 'Error deleting associated expenses.' });
+        }
+      }
 
+      // Eliminar el elemento
+      await element.destroy();
+
+      // Enviar respuesta exitosa
+      return reply.code(200).send({ message: 'Deleted successfully' });
     } catch (error) {
       console.error(error);
-      return reply.code(400).send({ error: 'Error' });
-    };
+      // Enviar respuesta de error interno del servidor
+      return reply.code(500).send({ error: 'Internal Server Error' });
+    }
 
   };
 
